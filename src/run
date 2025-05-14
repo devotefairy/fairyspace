@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+# python manage.py generate_test_data --schools 3 --teachers-per-school 10 --classrooms-per-school 8 --students-per-classroom 25
+
+source ../.venv/bin/activate && python manage.py runserver_plus 0.0.0.0:8001

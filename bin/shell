@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /Users/kycool/Documents/gitproject/devotefairy/fairyspace/src
+
+source ../.venv/bin/activate && python manage.py shell_plus 

@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fairyspace"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+keywords = []
+maintainers = [
+  { name = "allen", email = "kycoolcool@gmail.com" },
+]
+authors = [
+  { name = "allen", email = "kycoolcool@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "django>=5.2",
+  "djangorestframework>=3.16",
+]
+
+[project.urls]
+Documentation = "https://github.com/devotefairy/fairyspace#readme"
+Issues = "https://github.com/devotefairy/fairyspace/issues"
+Source = "https://github.com/devotefairy/fairyspace"
+
+[tool.coverage.run]
+source_pkgs = ["fairyspace", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/fairyspace",
+  "/__about__.py",
+]
+
+[tool.coverage.paths]
+fairyspace = ["src/fairyspace"]
+tests = ["tests", "*/fairyspace/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]

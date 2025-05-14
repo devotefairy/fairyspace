@@ -1,0 +1,10 @@
+[version]
+path = "src/fairyspace/__about__.py"
+
+[envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+
+[envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/fairyspace tests}"
