@@ -32,10 +32,27 @@ FAIRY_INNER_ACTION_PARTIAL_UPDATE = 'partial_update'
 FAIRY_INNER_ACTION_PATCH_ENHANCE = 'patch_enhance'
 
 # 云函数动作
-FAIRY_INNER_ACTION_CLOUDFUNC = 'cloudfunc'
+FAIRY_INNER_ACTION_CLOUD_FUNC = 'cloudfunc'
 
 # 批量处理的动作
-FAIRY_INNER_ACTION_BATCH_PROCESS = 'batch'
+FAIRY_INNER_ACTION_BATCH_HANDLE = 'batch'
 
 # 导出文件的动作
 FAIRY_INNER_ACTION_EXPORT_FILE = 'export'
+
+# 配置文件夹和配置文件名称
+
+# 放全局的文件夹名称
+FAIRY_INNER_CONFIG_MODULE_DIR = 'fairyconfig'
+
+# 处理的视图
+FAIRY_INNER_CONFIG_VIEW = 'view'
+
+# 声明配置类
+FAIRY_INNER_CONFIG_STATEMENT = 'statement'
+
+# 自定义校验表单
+FAIRY_INNER_CONFIG_FORM = 'form'
+
+# 管理后台自定义的导出序列化类
+FAIRY_INNER_CONFIG_EXPORT = 'export'
