@@ -6,6 +6,12 @@ from collections.abc import Mapping
 from pydash import objects
 
 
+def line(msg=""):
+    print('-' * 100)
+    print(msg)
+    print()
+
+
 def dict_merge(origin_dict, merge_dict):
     """递归合并字典
 
@@ -42,7 +48,7 @@ def generate_nest_dict(fields):
     return tree_dict
 
 
-def get_prefetch_fields(data=None):
+def get_prefetch_fields(field_list=None):
     """获取 prefetch_related 字段
 
     例如客户端传入的字段是：['id', 'age', {'user': ['ss', {'work': ['address']}]}]
@@ -50,26 +56,27 @@ def get_prefetch_fields(data=None):
     返回的结果是 user.work
 
     Param:
-        data list display_fields
+        field_list list display_fields
     """
-    if not data:
+    if not field_list:
         return
 
     prefetch_keys, removed_keys = set(), set()
 
-    def clean_fields(data, relation_key=''):
-        for _, item in enumerate(data):
+    def clean_fields(field_list, relation_key=''):
+        for _, item in enumerate(field_list):
             if isinstance(item, dict):
                 if relation_key:
                     removed_keys.add(relation_key)
                 for key, value in item.items():
                     connect_key = f'{relation_key}.{key}' if relation_key else key
+                    line(f'connect_key: {connect_key}')
                     if isinstance(value, list):
                         clean_fields(value, connect_key)
             elif relation_key:
                 prefetch_keys.add(relation_key)
 
-    clean_fields(data)
+    clean_fields(field_list)
     return list(prefetch_keys.difference(removed_keys))
 
 

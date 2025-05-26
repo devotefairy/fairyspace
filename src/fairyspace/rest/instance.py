@@ -51,11 +51,12 @@ class FairyInstance:
             setattr(self, key, value)
 
     def __setattr__(self, name, value):
+        """设置属性"""
         if name not in DEFAULT_SPACE:
             raise Exception(f'设置键： {name} 不合法')
         return super().__setattr__(name, value)
 
     @classmethod
     def set_namespace_instance(cls, view):
-        """设置命名空间对象"""
+        """给视图对象，设置命名空间对象"""
         setattr(view, cls.instance_namespace, cls())

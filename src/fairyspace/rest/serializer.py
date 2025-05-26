@@ -47,7 +47,7 @@ class ModelSerializer(serializers.ModelSerializer):
                     queryset = attribute if django_field.one_to_one else attribute.all()
                     ret[field.field_name] = field.to_representation(queryset)
                 except Exception as e:
-                    print('errorrrrr', e)
+                    print('error', e)
             else:
                 try:
                     attribute = field.get_attribute(instance)
@@ -151,7 +151,7 @@ def create_serializer_class(model, action=None, attrs=None, display_fields=None)
                 display_fields=display_fields,
             ),
             'action': action,
-            'fairycloud_model': model,
+            'fairy_model': model,
             '__init__': __init__,
             **attrs,
         },

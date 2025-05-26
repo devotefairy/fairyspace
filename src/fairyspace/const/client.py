@@ -1,9 +1,11 @@
 """
-客户端使用的常量列表
+调用端使用的常量列表
 
-例如客户端和管理端，或者其他端传递数据的标准
+这里的调用端包含各种各样的调用方，例如：客户端，管理端，开放端
 
-常量命名格式为 FAIRY_CLIENT_{名称}
+定义各种调用端传递数据的标准
+
+常量命名格式为 FAIRY_CALLER_{名称}
 """
 
 """
@@ -25,17 +27,17 @@
     data: 具体的业务数据
 }
 """
-FAIRY_CLIENT_NAMESPACE = 'fairyspace'
+FAIRY_CALLER_NAMESPACE = 'fairyspace'
 
 """
 接口请求返回展示的字段
 
-数据格式 <列表>
+数据格式 <list>
 
 示例
     ['id', 'name', {'user': ['nick_name']}]
 """
-FAIRY_CLIENT_DISPLAY_FIELD_LIST = 'fields'
+FAIRY_CALLER_DISPLAY_FIELD_LIST = 'fields'
 
 """
 客户端传入过滤条件的命名空间
@@ -43,7 +45,7 @@ FAIRY_CLIENT_DISPLAY_FIELD_LIST = 'fields'
 通过此进行数据过滤和筛选
 
 支持的方法：如果在 body 中传入过滤条件都支持
-数据格式 <List>
+数据格式 <list>
 
 示例：
 
@@ -57,10 +59,12 @@ FAIRY_CLIENT_DISPLAY_FIELD_LIST = 'fields'
         ...
     ]
 """
-FAIRY_CLIENT_QUERY_FILTER_LIST = 'filters'
+FAIRY_CALLER_QUERY_FILTER_LIST = 'filters'
 
 """
 函数声明：云函数或者批量函数的名称
+
+数据格式 <str>
 
 例如：
 
@@ -68,9 +72,9 @@ FAIRY_CLIENT_QUERY_FILTER_LIST = 'filters'
         'func': 'func_name'
     }
 """
-FAIRY_CLIENT_CLOUD_FUNC_NAME = 'func'
+FAIRY_CALLER_CLOUD_FUNC_NAME = 'func'
 
 """
 访问端传入使用导出配置中的哪个索引 Key
 """
-FAIRY_CLIENT_EXPORT_DATA_KEY = 'export'
+FAIRY_CALLER_EXPORT_DATA_KEY = 'export'

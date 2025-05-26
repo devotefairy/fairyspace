@@ -84,16 +84,16 @@ class FairyMixin:
             action_name = self.action
 
             if self.action == 'cloudfunc':
-                func_name = self.fairy_instance.request_namespace.get(const.FAIRY_CLIENT_CLOUD_FUNC_NAME)
+                func_name = self.fairy_instance.request_namespace.get(const.FAIRY_CALLER_CLOUD_FUNC_NAME)
                 action_name = f'cloudfunc_{func_name}'
             elif self.action == 'batch':
-                func_name = self.fairy_instance.request_namespace.get(const.FAIRY_CLIENT_CLOUD_FUNC_NAME)
+                func_name = self.fairy_instance.request_namespace.get(const.FAIRY_CALLER_CLOUD_FUNC_NAME)
                 action_name = f'batch_{func_name}'
 
             self.fairy_instance.custom_action_handler = getattr(custom_view_instance, action_name, None)
 
     def fairy_get_request_namespace(self, request, *args, **kwargs):
-        """获取请求端命名空间对应的参数
+        """获取调用端传递命名空间对应的参数
 
         请求端传入的格式：
         {
@@ -105,13 +105,14 @@ class FairyMixin:
             data: 数据
         }
         """
-        self.fairy_instance.request_namespace = request.data.get(const.FAIRY_CLIENT_NAMESPACE, {})
+        # 获取请求端传入的命名空间
+        self.fairy_instance.request_namespace = request.data.get(const.FAIRY_CALLER_NAMESPACE, {})
         if not isinstance(self.fairy_instance.request_namespace, dict):
             self.fairy_instance.request_namespace = {}
 
     def fairy_get_model(self, request, *args, **kwargs):
         """
-        获取模型
+        根据路由上的 app 和 model 获取模型
         """
         self.fairy_instance.app_label = self.kwargs.get('app')
         self.fairy_instance.model_label = self.kwargs.get('model')
@@ -124,7 +125,7 @@ class FairyMixin:
         """
         try:
             self.fairy_instance.display_fields = self.fairy_instance.request_namespace.get(
-                const.FAIRY_CLIENT_DISPLAY_FIELD_LIST
+                const.FAIRY_CALLER_DISPLAY_FIELD_LIST
             )
             self.fairy_instance.expand_fields = data.get_prefetch_fields(self.fairy_instance.display_fields)
 
@@ -153,8 +154,8 @@ class FairyMixin:
         for _, item in enumerate(expand_fields):
             field_list, model = item.split('.'), self.fairy_instance.model
 
-            for index, value in enumerate(field_list):
-                field = model._meta.get_field(value)
+            for index, field_name in enumerate(field_list):
+                field = model._meta.get_field(field_name)
 
                 # 这里只有是关系字段才会处理，如果不是，则直接忽略
                 if not meta.is_relation_field(field):
@@ -169,6 +170,7 @@ class FairyMixin:
 
                 model = field.related_model
             result.append('.'.join(field_list))
+
         self.fairy_instance.transform_expand_fields = result
 
 
@@ -377,7 +379,7 @@ class FairyCloudFuncMixin:
     @action(methods=['post'], detail=False, url_path='cloudfunc')
     def cloudfunc(self, request, *args, **kwargs):
         data = request.data.get('data')
-        func_name = self.fairy_instance.request_namespace.get(const.FAIRY_CLIENT_CLOUD_FUNC_NAME)
+        func_name = self.fairy_instance.request_namespace.get(const.FAIRY_CALLER_CLOUD_FUNC_NAME)
         handler = self.fairy_instance.custom_action_handler
 
         if not handler:
@@ -437,7 +439,7 @@ class FairyBatchHandleMixin:
         """
         data = {
             'data': request.data.get('data'),
-            'func_name': self.fairy_instance.request_namespace.get(const.FAIRY_CLIENT_CLOUD_FUNC_NAME),
+            'func_name': self.fairy_instance.request_namespace.get(const.FAIRY_CALLER_CLOUD_FUNC_NAME),
         }
 
         serializer = _BatchProcessForm(data=data, context=self.get_serializer_context())
