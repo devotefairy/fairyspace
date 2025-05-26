@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 from django.utils import timezone
-from .models import School, Teacher, ClassRoom, Student, StudentCard
+from .models import School, Course, Teacher, ClassRoom, Student, StudentCard, Backpack
 
 
 class SchoolFactory(DjangoModelFactory):
@@ -11,6 +11,15 @@ class SchoolFactory(DjangoModelFactory):
     name = factory.Faker('company')
     address = factory.Faker('address')
     established_year = factory.Faker('year')
+
+
+class CourseFactory(DjangoModelFactory):
+    class Meta:
+        model = Course
+
+    name = factory.Faker('word')
+    code = factory.Faker('bothify', text='??###')
+    description = factory.Faker('text', max_nb_chars=200)
 
 
 class TeacherFactory(DjangoModelFactory):
@@ -51,3 +60,15 @@ class StudentCardFactory(DjangoModelFactory):
     card_number = factory.Faker('uuid4')
     issued_date = factory.Faker('date_this_year')
     is_active = True
+
+
+class BackpackFactory(DjangoModelFactory):
+    class Meta:
+        model = Backpack
+
+    student = factory.SubFactory(StudentFactory)
+    brand = factory.Faker('company')
+    color = factory.Faker('color_name')
+    size = factory.Faker('random_element', elements=['S', 'M', 'L', 'XL'])
+    purchase_date = factory.Faker('date_this_year')
+    is_damaged = factory.Faker('boolean', chance_of_getting_true=10)

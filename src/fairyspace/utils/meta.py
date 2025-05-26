@@ -26,6 +26,9 @@ def is_concrete_relation_field(field):
     """
     是否是真实的关系字段，即表中真实存在的字段
 
+    - 是关系字段
+    - 字段是真实存在的
+
     TAG: 元工具函数
 
     class A:

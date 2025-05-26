@@ -10,11 +10,22 @@ class School(models.Model):
         return self.name
 
 
+class Course(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=20, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
+
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='teachers')
     subject = models.CharField(max_length=100)
     hire_date = models.DateField()
+    # 老师和课程的多对多关系，定义 related_name
+    courses = models.ManyToManyField(Course, related_name='teachers', blank=True)
 
     def __str__(self):
         return self.name
@@ -22,7 +33,8 @@ class Teacher(models.Model):
 
 class ClassRoom(models.Model):
     name = models.CharField(max_length=50)
-    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='classrooms')
+    # ❎ 班级和学校的一对多关系，不定义 related_name
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, blank=True, related_name='classrooms')
     grade = models.CharField(max_length=20)
 
@@ -35,6 +47,8 @@ class Student(models.Model):
     classroom = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='students')
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='students')
     enrollment_date = models.DateField()
+    #  ❎ 学生和老师的多对多关系，不定义 related_name
+    teachers = models.ManyToManyField(Teacher, blank=True)
 
     def __str__(self):
         return self.name
@@ -48,3 +62,24 @@ class StudentCard(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.card_number}"
+
+
+class Backpack(models.Model):
+    # ❎ 学生和书包的一对一关系，不定义 related_name
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+    brand = models.CharField(max_length=50)
+    color = models.CharField(max_length=30)
+    size = models.CharField(
+        max_length=20,
+        choices=[
+            ('S', 'Small'),
+            ('M', 'Medium'),
+            ('L', 'Large'),
+            ('XL', 'Extra Large'),
+        ],
+    )
+    purchase_date = models.DateField()
+    is_damaged = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.student.name}'s {self.brand} backpack"
