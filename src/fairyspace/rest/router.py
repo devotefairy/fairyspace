@@ -59,3 +59,17 @@ class FairySimpleRouter(SimpleRouter):
             initkwargs={},
         ),
     ]
+
+
+class FairyUploadRouter(SimpleRouter):
+
+    routes = [
+        # 上传文件
+        Route(
+            url=r'^{prefix}/upload{trailing_slash}$',
+            mapping={'post': 'upload'},
+            name='{basename}-upload',
+            detail=False,
+            initkwargs={'suffix': 'Upload'},
+        ),
+    ]

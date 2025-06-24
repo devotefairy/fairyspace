@@ -9,7 +9,7 @@ from django.urls import path, include
 
 from fairyspace.const import FAIRY_INNER_CONFIG_VIEW
 from fairyspace.rest.router import FairySimpleRouter
-from fairyspace.rest.views import FairyModelViewSet
+from fairyspace.rest.views import FairyModelViewSet, FairyUploadView
 from fairyspace.utils.module import import_class_from_string
 
 
@@ -72,7 +72,13 @@ def fairy_get_urls():
                 f'fairy/{key}/<str:app>/<str:model>/',
                 include(make_urls_class(key, value)),
             )
-        )
+        ),
+
+    # 注册上传文件的视图
+    urlpatterns.append(
+        path('fairy/oss/', FairyUploadView.as_view(), name='fairy-oss'),
+    )
+
     return urlpatterns
 
 

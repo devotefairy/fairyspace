@@ -1,6 +1,8 @@
 import inspect
 
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from fairyspace.rest import mixins
 from fairyspace.rest.instance import FairyInstance
@@ -161,5 +163,16 @@ class FairyModelViewSet(
     """
     所有端共用的基类
     """
+
+    pass
+
+
+class FairyUploadView(APIView, mixins.FairyUpLoadMixin):
+    """
+    上传文件的基类
+    """
+
+    # parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser]
 
     pass

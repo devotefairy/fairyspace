@@ -1,5 +1,7 @@
+import os
 from django.db import transaction
 from django.apps import apps
+from django.conf import settings
 
 from rest_framework.decorators import action
 from rest_framework import serializers
@@ -446,3 +448,86 @@ class FairyBatchHandleMixin:
         serializer.is_valid(raise_exception=True)
         response = serializer.handle(self, request, *args, **kwargs)
         return success_response(response)
+
+
+class FileUploadSerializer(serializers.Serializer):
+    # FileField 用于处理上传的文件
+    file = serializers.FileField(help_text="请上传文件。")
+    # 可选：如果你希望同时接收文件的描述
+    name = serializers.CharField(max_length=255, required=False, help_text="文件的可选描述。")
+    dir_prefix = serializers.CharField(max_length=255, required=False, help_text="文件的目录前缀。", default='upload')
+
+    class Meta:
+        fields = ['file', 'name', 'dir_prefix']  # 修复：添加了 'name' 字段
+
+
+class FairyUpLoadMixin:
+    """上传文件"""
+
+    def post(self, request, *args, **kwargs):
+        """
+        上传文件
+        """
+        print("--------------文件上传------------------")
+        print(request.data)
+        print("--------------------------------")
+
+        serializer = FileUploadSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        file = serializer.validated_data.get('file')
+        name = serializer.validated_data.get('name')
+
+        if not file:
+            raise exception.FairySpaceException(
+                error_code=exception.FAIRY_PARAMETER_FORMAT_ERROR,
+                error_data='上传的文件不能为空',
+            )
+
+        # 获取目录路径，如果没有指定则使用默认值
+        dir_prefix = request.data.get('dir_prefix')
+        if not dir_prefix:
+            dir_prefix = 'default'
+
+        # 确保 MEDIA_ROOT 存在
+        if not hasattr(settings, 'MEDIA_ROOT') or not settings.MEDIA_ROOT:
+            raise exception.FairySpaceException(
+                error_code=exception.FAIRY_PARAMETER_FORMAT_ERROR,
+                error_data='服务器配置错误：MEDIA_ROOT 未配置',
+            )
+
+        # 构建文件保存路径
+        file_name = name or file.name
+        upload_dir = os.path.join(settings.MEDIA_ROOT, dir_prefix)
+
+        # 创建目录（如果不存在）
+        try:
+            os.makedirs(upload_dir, exist_ok=True)
+        except OSError as e:
+            raise exception.FairySpaceException(
+                error_code=exception.FAIRY_PARAMETER_FORMAT_ERROR,
+                error_data=f'无法创建上传目录：{str(e)}',
+            )
+
+        file_path = os.path.join(upload_dir, file_name)
+        # 保存文件
+        try:
+            with open(file_path, 'wb') as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
+        except OSError as e:
+            raise exception.FairySpaceException(
+                error_code=exception.FAIRY_PARAMETER_FORMAT_ERROR,
+                error_data=f'文件保存失败：{str(e)}',
+            )
+
+        host = request.get_host()
+        host = f'http://{host}'
+        return success_response(
+            {
+                'file_path': 'file_path',
+                'file_name': 'file_name',
+                'relative_path': 'relative_path',
+                'url': f'{host}{settings.MEDIA_URL}{dir_prefix}/{file_name}',
+            }
+        )
